@@ -1,32 +1,32 @@
-clearvars
-close all
-clc
+global MaxGridX;
+global MaxGridY;
 
 MinRoomSquareSize = 3;
 MaxRoomSquareSize = 11;
 
-MaxGridX = 30;
-MaxGridY = 30;
-
 NumPlacedRooms = 0;
-MaxNumRooms = 8;
+MaxNumRooms = 3;
 
 NumLargeRoomSize = 0;
 MaxNumLargeRooms = 1;
 
-% Start with X x Y Grid
-figure
-hold on
-grid on
-axis([0 MaxGridX 0 MaxGridY])
-xticks(0:2:MaxGridX)
-yticks(0:2:MaxGridY)
+StartRoomSize = [5 5];
+BossRoomSize = [11 6];
+
 while NumPlacedRooms < MaxNumRooms
     RestartFlag = 0;
     
     %- Pick Random Point on Grid for Center of XxY room
-    room_size_x = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
-    room_size_y = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
+    if (NumPlacedRooms == 0)
+        room_size_x = StartRoomSize(1);
+        room_size_y = StartRoomSize(2);
+    elseif (NumPlacedRooms == 1)
+        room_size_x = BossRoomSize(1);
+        room_size_y = BossRoomSize(2);
+    else
+        room_size_x = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
+        room_size_y = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
+    end
     if (mod(room_size_x,2) == 0)
         room_size_x = room_size_x + 1;
     end
@@ -102,32 +102,11 @@ while NumPlacedRooms < MaxNumRooms
     end
 end
 
-%- Place Doors
-for i = 1:length(RoomCoord)
-% i = 1;
-    if RoomCoord(i).RoomSizeX * RoomCoord(i).RoomSizeY > 28
-        NumDoors = 3;
-    elseif RoomCoord(i).RoomSizeX * RoomCoord(i).RoomSizeY > 20
-        NumDoors = 2;
-    else
-        NumDoors = 1;
-    end
-    for j = 1:NumDoors
-% j = 1;
-
-        rand_idx = round(rand()*(length(RoomCoord(i).X_Vec)-1))+1;
-        RoomCoord(i).Door(j).X = [RoomCoord(i).X_Vec(rand_idx) RoomCoord(i).X_Vec(rand_idx+1)];
-        RoomCoord(i).Door(j).Y = [RoomCoord(i).Y_Vec(rand_idx) RoomCoord(i).Y_Vec(rand_idx+1)];
-    end
-end
-
+hold on
 for i = 1:MaxNumRooms
-    fill(RoomCoord(i).X_Vec,RoomCoord(i).Y_Vec,'k')
+    fill(RoomCoord(i).X_Vec,RoomCoord(i).Y_Vec,'b')
     text(RoomCoord(i).CenterX-0.5,RoomCoord(i).CenterY,sprintf('%i',i),...
         'FontSize',16,'Color','w')
-    for j = 1:length(RoomCoord(i).Door)
-        plot(RoomCoord(i).Door(j).X,RoomCoord(i).Door(j).Y,'-c','LineWidth',2)
-    end
 end
 
 
