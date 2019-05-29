@@ -1,4 +1,4 @@
-function [new_point, base_point, Viable] = DigNextTunnel(dir,point_vec)
+function [new_point, base_point, Viable] = DigNextTunnel(dir,base_point,point_vec)
 global MaxGridX MaxGridY
 
 Continue = 0;
@@ -16,11 +16,11 @@ while (~Continue)
     % Down - 2
     % Left - 3
     temp = rand();
-    if (temp < 0.2)
+    if (temp < 0.25)
         direction = 0;
-    elseif (temp < 0.4)
+    elseif (temp < 0.5)
         direction = 2;
-    elseif (temp < 0.7)
+    elseif (temp < 0.75)
         direction = 1;
     elseif (temp < 1.0)
         direction = 3;
@@ -40,8 +40,12 @@ while (~Continue)
             direction = 3;
         end
     end
-    new_point = [point_vec(OriginIndex,1) point_vec(OriginIndex,2)] + dir(direction);
-    
+    new_point = [point_vec(OriginIndex,1) point_vec(OriginIndex,2)] + dir(direction)*2;
+    draw_point = plot(new_point(1),new_point(2),...
+            'ok','MarkerFaceColor','g','MarkerSize',6);
+    pause(1e-2)
+    delete(draw_point)
+       
     %- Check Viable Point
     if (new_point(1) < 0 || new_point(1) > MaxGridX) ||...
             (new_point(2) < 0 || new_point(2) > MaxGridY)

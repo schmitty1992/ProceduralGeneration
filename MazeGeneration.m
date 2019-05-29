@@ -4,8 +4,8 @@ clc
 
 global MaxGridX;
 global MaxGridY;
-MaxGridX = 30;
-MaxGridY = 16;
+MaxGridX = 40;
+MaxGridY = 20;
 
 % Start with X x Y Grid
 f = figure;
@@ -42,14 +42,15 @@ MarkerSize = 8;
 i = 1;
 point_vec = [StartX StartY];
 filename='test.gif';
-while i < (MaxGridX * MaxGridY)
+base_point = point_vec;
+while i < (MaxGridX * MaxGridY)/4
     %- Check to see all surrounding areas except origin are still "walls"
-    [new_point, base_point, Viable] = DigNextTunnel(dir,point_vec);
+    [new_point, base_point, Viable] = DigNextTunnel(dir,base_point,point_vec);
     
     if (Viable)
         pause(1e-4)
         plot([base_point(1) new_point(1)],[base_point(2) new_point(2)],...
-            '-ok','MarkerFaceColor','k','MarkerSize',MarkerSize,'LineWidth',5)
+            '-k','MarkerFaceColor','k','MarkerSize',MarkerSize,'LineWidth',6)
         point_vec(end+1,:) = new_point;
     end
     
@@ -69,5 +70,7 @@ while i < (MaxGridX * MaxGridY)
       i = i + 1;
 end
 
-plot(StartX,StartY,'ok','MarkerFaceColor','g','MarkerSize',MarkerSize+2)
-plot(EndX,EndY,'ok','MarkerFaceColor','r','MarkerSize',MarkerSize+2)
+% plot(StartX,StartY,'ok','MarkerFaceColor','g','MarkerSize',MarkerSize+2)
+% plot(EndX,EndY,'ok','MarkerFaceColor','r','MarkerSize',MarkerSize+2)
+
+RoomPlacement
