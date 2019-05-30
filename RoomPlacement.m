@@ -5,13 +5,16 @@ MinRoomSquareSize = 3;
 MaxRoomSquareSize = 11;
 
 NumPlacedRooms = 0;
-MaxNumRooms = 3;
+MaxNumRooms = 8;
 
 NumLargeRoomSize = 0;
 MaxNumLargeRooms = 1;
 
 StartRoomSize = [5 5];
 BossRoomSize = [11 6];
+
+RoomTypes = containers.Map({0,1,2,3},...
+    {[244 220 181]/255,[79 121 66]/255,[211 211 211]/255, [255,223,0]/255});
 
 while NumPlacedRooms < MaxNumRooms
     RestartFlag = 0;
@@ -104,7 +107,17 @@ end
 
 hold on
 for i = 1:MaxNumRooms
-    fill(RoomCoord(i).X_Vec,RoomCoord(i).Y_Vec,'b')
+    percent_chance = rand();
+    if (percent_chance < 0.05)
+        room_type_selection = 3;
+    elseif (percent_chance < 0.30)
+        room_type_selection = 0;
+    elseif (percent_chance < 0.60)
+        room_type_selection = 1;
+    elseif (percent_chance <= 1)
+        room_type_selection = 2;
+    end
+    fill(RoomCoord(i).X_Vec,RoomCoord(i).Y_Vec,RoomTypes(room_type_selection))
     text(RoomCoord(i).CenterX-0.5,RoomCoord(i).CenterY,sprintf('%i',i),...
         'FontSize',16,'Color','w')
 end
