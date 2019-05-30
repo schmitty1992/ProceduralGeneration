@@ -34,7 +34,8 @@ keySet = {0, 1, 2, 3};
 valueSet = [N, E, S, W];
 dir = containers.Map(keySet,valueSet);
 
-%- Plot Qualities
+%- Plot Qualities\
+AnimateDraw = 0;
 SaveGif = 0;
 MarkerSize = 8;
 
@@ -43,15 +44,29 @@ i = 1;
 point_vec = [StartX StartY];
 filename='test.gif';
 base_point = point_vec;
+draw_base_point = [];
+draw_new_point = [];
 while i < (MaxGridX * MaxGridY)/4
     %- Check to see all surrounding areas except origin are still "walls"
     [new_point, base_point, Viable] = DigNextTunnel(dir,base_point,point_vec);
     
     if (Viable)
-        pause(1e-4)
+        if (AnimateDraw)
+            pause(1e-2)
+            delete(draw_base_point)
+            delete(draw_new_point)
+        end
         plot([base_point(1) new_point(1)],[base_point(2) new_point(2)],...
             '-k','MarkerFaceColor','k','MarkerSize',MarkerSize,'LineWidth',6)
+        if (AnimateDraw)
+            draw_base_point = plot(base_point(1),base_point(2),...
+                'ok','MarkerFaceColor','g','MarkerSize',MarkerSize);
+            draw_new_point = plot(new_point(1),new_point(2),...
+                'ok','MarkerFaceColor','c','MarkerSize',MarkerSize);
+        end
+%         delete(draw_point)
         point_vec(end+1,:) = new_point;
+        base_point = new_point;
     end
     
     if (SaveGif)
@@ -70,7 +85,7 @@ while i < (MaxGridX * MaxGridY)/4
       i = i + 1;
 end
 
-% plot(StartX,StartY,'ok','MarkerFaceColor','g','MarkerSize',MarkerSize+2)
-% plot(EndX,EndY,'ok','MarkerFaceColor','r','MarkerSize',MarkerSize+2)
+delete(draw_base_point)
+delete(draw_new_point)
 
 RoomPlacement

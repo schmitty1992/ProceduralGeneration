@@ -5,8 +5,14 @@ Continue = 0;
 UsedDirections = [];
 % fprintf('Origin Point: [%2.1f %2.1f] \n',...
 %     point_vec(end,1),point_vec(end,2))
-base_point = [point_vec(end,1) point_vec(end,2)];
-[OriginIndex, ~] = size(point_vec);
+[r,~] = size(point_vec);
+for i = 1:r
+    if all(base_point == point_vec(i,:))
+        OriginIndex = i;
+        break;
+    end
+end
+
 while (~Continue)
     Viable = 1;
     
@@ -26,9 +32,7 @@ while (~Continue)
         direction = 3;
     end
     
-    %     direction = randi([0,3]);
     while any(direction == UsedDirections)
-        %         direction = randi([0,3]);
         temp = rand();
         if (temp < 0.1)
             direction = 0;
@@ -40,11 +44,7 @@ while (~Continue)
             direction = 3;
         end
     end
-    new_point = [point_vec(OriginIndex,1) point_vec(OriginIndex,2)] + dir(direction)*2;
-    draw_point = plot(new_point(1),new_point(2),...
-            'ok','MarkerFaceColor','g','MarkerSize',6);
-    pause(1e-2)
-    delete(draw_point)
+    new_point = base_point + dir(direction)*2;
        
     %- Check Viable Point
     if (new_point(1) < 0 || new_point(1) > MaxGridX) ||...
@@ -53,7 +53,6 @@ while (~Continue)
         Viable = 0;
     end
     
-    [r,~] = size(point_vec);
     for i = 1:r
         if all(new_point == point_vec(i,:))
 %             disp('ERR: New point already exists in stack')
@@ -68,11 +67,11 @@ while (~Continue)
     end
     
     if length(UsedDirections) == 4
-%         disp('**All Directions Checked, Non-Viable.**')
+        %         disp('**All Directions Checked, Non-Viable.**')
         UsedDirections = [];
         OriginIndex = OriginIndex - 1;
-%         fprintf('New Origin Point: [%2.1f %2.1f] \n',...
-%             point_vec(OriginIndex,1),point_vec(OriginIndex,2))
+        %         fprintf('New Origin Point: [%2.1f %2.1f] \n',...
+        %             point_vec(OriginIndex,1),point_vec(OriginIndex,2))
         base_point = [point_vec(OriginIndex,1) point_vec(OriginIndex,2)];
     end
 end
