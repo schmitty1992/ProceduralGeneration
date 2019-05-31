@@ -1,5 +1,14 @@
-function [new_point, base_point, Viable] = DigNextTunnel(dir,base_point,point_vec)
+function [new_point, base_point, Viable] = DigNextTunnel(base_point,point_vec)
 global MaxGridX MaxGridY
+
+%- Direction Vectors
+N = {[0 1]};
+E = {[1 0]};
+S = {[0 -1]};
+W = {[-1 0]};
+keySet = {0, 1, 2, 3};
+valueSet = [N, E, S, W];
+dir = containers.Map(keySet,valueSet);
 
 Continue = 0;
 UsedDirections = [];
@@ -22,11 +31,11 @@ while (~Continue)
     % Down - 2
     % Left - 3
     temp = rand();
-    if (temp < 0.25)
+    if (temp < 0.2)
         direction = 0;
-    elseif (temp < 0.5)
+    elseif (temp < 0.4)
         direction = 2;
-    elseif (temp < 0.75)
+    elseif (temp < 0.7)
         direction = 1;
     elseif (temp < 1.0)
         direction = 3;

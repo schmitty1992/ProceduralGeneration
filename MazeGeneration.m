@@ -4,7 +4,7 @@ clc
 
 global MaxGridX;
 global MaxGridY;
-MaxGridX = 40;
+MaxGridX = 30;
 MaxGridY = 20;
 
 % Start with X x Y Grid
@@ -18,23 +18,14 @@ xticklabels([])
 yticklabels([])
 
 %- Pick Start Point
-StartX = randi([0,floor(MaxGridX*0.25)])+0.5;
-StartY = randi([0,floor(MaxGridY*0.25)])+0.5;
+StartX = randi([3,floor(MaxGridX*0.25)])+0.5;
+StartY = randi([3,floor(MaxGridY*0.25)])+0.5;
 
 %- Pick End Point
-EndX = randi([floor(MaxGridX*0.75),MaxGridX-1])+0.5;
-EndY = randi([floor(MaxGridY*0.75),MaxGridY-1])+0.5;
+EndX = randi([floor(MaxGridX*0.75),MaxGridX-6])+0.5;
+EndY = randi([floor(MaxGridY*0.75),MaxGridY-4])+0.5;
 
-%- Direction Vectors
-N = {[0 1]};
-E = {[1 0]};
-S = {[0 -1]};
-W = {[-1 0]};
-keySet = {0, 1, 2, 3};
-valueSet = [N, E, S, W];
-dir = containers.Map(keySet,valueSet);
-
-%- Plot Qualities\
+%- Plot Qualities
 AnimateDraw = 0;
 SaveGif = 0;
 MarkerSize = 8;
@@ -48,7 +39,7 @@ draw_base_point = [];
 draw_new_point = [];
 while i < (MaxGridX * MaxGridY)/4
     %- Check to see all surrounding areas except origin are still "walls"
-    [new_point, base_point, Viable] = DigNextTunnel(dir,base_point,point_vec);
+    [new_point, base_point, Viable] = DigNextTunnel(base_point,point_vec);
     
     if (Viable)
         if (AnimateDraw)

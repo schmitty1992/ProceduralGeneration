@@ -2,7 +2,7 @@ global MaxGridX;
 global MaxGridY;
 
 MinRoomSquareSize = 3;
-MaxRoomSquareSize = 11;
+MaxRoomSquareSize = 9;
 
 NumPlacedRooms = 0;
 MaxNumRooms = 8;
@@ -13,10 +13,21 @@ MaxNumLargeRooms = 1;
 StartRoomSize = [5 5];
 BossRoomSize = [11 6];
 
-RoomTypes = containers.Map({0,1,2,3},...
-    {[244 220 181]/255,[79 121 66]/255,[211 211 211]/255, [255,223,0]/255});
+%- Room Types
+% 0 - Sand
+% 1 - Forest
+% 2 - Cave
+% 3 - Treasure
+RoomTypes = containers.Map({0,1,2,3,4,5},...
+    {[244 220 181]/255,...
+    [79 121 66]/255,...
+    [211 211 211]/255,...
+    [255,223,0]/255,...
+    [155 17 30]/255,...
+    [51 165 50]/255});
 
 while NumPlacedRooms < MaxNumRooms
+%     fprintf('# Placed Rooms: %i \n',NumPlacedRooms)
     RestartFlag = 0;
     
     %- Pick Random Point on Grid for Center of XxY room
@@ -37,8 +48,16 @@ while NumPlacedRooms < MaxNumRooms
         room_size_y = room_size_y + 1;
     end
     
-    rand_x = round(rand()*MaxGridX-2)+1;
-    rand_y = round(rand()*MaxGridY-2)+1;
+    if NumPlacedRooms == 0
+        rand_x = StartX;
+        rand_y = StartY;
+    elseif NumPlacedRooms == 1
+        rand_x = EndX;
+        rand_y = EndY;
+    else
+        rand_x = randi([0,MaxGridX-2])+0.5;
+        rand_y = randi([0,MaxGridY-2])+0.5;
+    end
     
     minX = rand_x - (room_size_x-1)/2;
     maxX = rand_x + (room_size_x-1)/2;
@@ -107,15 +126,21 @@ end
 
 hold on
 for i = 1:MaxNumRooms
-    percent_chance = rand();
-    if (percent_chance < 0.05)
-        room_type_selection = 3;
-    elseif (percent_chance < 0.30)
-        room_type_selection = 0;
-    elseif (percent_chance < 0.60)
-        room_type_selection = 1;
-    elseif (percent_chance <= 1)
-        room_type_selection = 2;
+    if i == 1
+        room_type_selection = 5;
+    elseif i == 2
+        room_type_selection = 4;
+    else
+        percent_chance = rand();
+        if (percent_chance < 0.05)
+            room_type_selection = 3;
+        elseif (percent_chance < 0.30)
+            room_type_selection = 0;
+        elseif (percent_chance < 0.60)
+            room_type_selection = 1;
+        elseif (percent_chance <= 1)
+            room_type_selection = 2;
+        end
     end
     fill(RoomCoord(i).X_Vec,RoomCoord(i).Y_Vec,RoomTypes(room_type_selection))
     text(RoomCoord(i).CenterX-0.5,RoomCoord(i).CenterY,sprintf('%i',i),...
