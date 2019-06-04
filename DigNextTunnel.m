@@ -1,4 +1,5 @@
-function [new_point, base_point, Viable] = DigNextTunnel(base_point,point_vec)
+function [new_point, base_point, Map, Viable] =...
+    DigNextTunnel(base_point,point_vec,DirectionDistribution,Map)
 global MaxGridX MaxGridY
 
 %- Direction Vectors
@@ -84,6 +85,58 @@ while (~Continue)
         base_point = [point_vec(OriginIndex,1) point_vec(OriginIndex,2)];
     end
 end
+
+for i = 1:MaxGridX
+    for j = 1:MaxGridY
+        if all(base_point == Map(i,j).LocationCenter)
+            X = i;
+            Y = j;
+            switch direction
+                case 0
+                    Map(i,j) = RemoveWall(Map(i,j),0);
+                    Map(i,j+1) = RemoveWall(Map(i,j+1),2);
+                    Map(i,j+1) = RemoveWall(Map(i,j+1),0);
+                    Map(i,j+1).Visited = true;
+                    DisplayWall(Map(i,j+1))
+                    Map(i,j+2) = RemoveWall(Map(i,j+2),2);
+                    Map(i,j+2).Visited = true;
+                    DisplayWall(Map(i,j+2))
+                case 1
+                    Map(i,j) = RemoveWall(Map(i,j),1);
+                    Map(i+1,j) = RemoveWall(Map(i+1,j),3);
+                    Map(i+1,j) = RemoveWall(Map(i+1,j),1);
+                    Map(i+1,j).Visited = true;
+                    DisplayWall(Map(i+1,j))
+                    Map(i+2,j) = RemoveWall(Map(i+2,j),3);
+                    Map(i+2,j).Visited = true;
+                    DisplayWall(Map(i+2,j))
+                case 2
+                    Map(i,j) = RemoveWall(Map(i,j),2);
+                    Map(i,j-1) = RemoveWall(Map(i,j-1),0);
+                    Map(i,j-1) = RemoveWall(Map(i,j-1),2);
+                    Map(i,j-1).Visited = true;
+                    DisplayWall(Map(i,j-1))
+                    Map(i,j-2) = RemoveWall(Map(i,j-2),0);
+                    Map(i,j-2).Visited = true;
+                    DisplayWall(Map(i,j-2))
+                case 3
+                    Map(i,j) = RemoveWall(Map(i,j),3);
+                    Map(i-1,j) = RemoveWall(Map(i-1,j),1);
+                    Map(i-1,j) = RemoveWall(Map(i-1,j),3);
+                    Map(i-1,j).Visited = true;
+                    DisplayWall(Map(i-1,j))
+                    Map(i-2,j) = RemoveWall(Map(i-2,j),1);
+                    Map(i-2,j).Visited = true;
+                    DisplayWall(Map(i-2,j))
+            end
+            break;
+        end
+    end
+end
+if r == 1
+    Map(X,Y).isStartPoint = true;
+end
+DisplayWall(Map(X,Y))
 
 end
 

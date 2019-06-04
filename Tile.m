@@ -13,6 +13,8 @@ classdef Tile
         % 1 - No Wall
         PolyX = [];
         PolyY = [];
+        Visited = false;
+        isStartPoint = false;
     end
     
     methods
@@ -49,13 +51,20 @@ classdef Tile
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
             
-            fill(obj.PolyX,obj.PolyY,'k')
+            if obj.isStartPoint
+                fill(obj.PolyX,obj.PolyY,'g','EdgeColor','g')
+            elseif obj.Visited
+                fill(obj.PolyX,obj.PolyY,[150 150 150]/255,...
+                    'EdgeColor',[150 150 150]/255)
+            else
+                fill(obj.PolyX,obj.PolyY,'k')
+            end
             for i = 1:length(obj.WallVector)
                 if ~isempty(obj.WallVector{i})
                     plot(obj.WallVector{i}(:,1),obj.WallVector{i}(:,2),'c','LineWidth',2)
                 end
             end
-            plot(obj.LocationCenter(1),obj.LocationCenter(2),'oc','MarkerFaceColor','w','MarkerSize',6)
+%             plot(obj.LocationCenter(1),obj.LocationCenter(2),'oc','MarkerFaceColor','w','MarkerSize',3)
             
         end
     end

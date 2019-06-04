@@ -49,14 +49,14 @@ while NumPlacedRooms < MaxNumRooms
     end
     
     if NumPlacedRooms == 0
-        rand_x = StartX;
-        rand_y = StartY;
+        rand_x = StartX-0.5;
+        rand_y = StartY-0.5;
     elseif NumPlacedRooms == 1
-        rand_x = EndX;
-        rand_y = EndY;
+        rand_x = EndX-0.5;
+        rand_y = EndY-0.5;
     else
-        rand_x = randi([0,MaxGridX-2])+0.5;
-        rand_y = randi([0,MaxGridY-2])+0.5;
+        rand_x = randi([0,MaxGridX-2]);
+        rand_y = randi([0,MaxGridY-2]);
     end
     
     minX = rand_x - (room_size_x-1)/2;
