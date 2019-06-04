@@ -32,25 +32,25 @@ while (~Continue)
     % Down - 2
     % Left - 3
     temp = rand();
-    if (temp < 0.2)
+    if (temp < DirectionDistribution(1))
         direction = 0;
-    elseif (temp < 0.4)
-        direction = 2;
-    elseif (temp < 0.7)
+    elseif (temp < sum(DirectionDistribution(1:2)))
         direction = 1;
-    elseif (temp < 1.0)
+    elseif (temp < sum(DirectionDistribution(1:3)))
+        direction = 2;
+    elseif (temp < sum(DirectionDistribution))
         direction = 3;
     end
     
     while any(direction == UsedDirections)
         temp = rand();
-        if (temp < 0.1)
+        if (temp < DirectionDistribution(1))
             direction = 0;
-        elseif (temp < 0.2)
-            direction = 2;
-        elseif (temp < 0.6)
+        elseif (temp < sum(DirectionDistribution(1:2)))
             direction = 1;
-        elseif (temp < 1.0)
+        elseif (temp < sum(DirectionDistribution(1:3)))
+            direction = 2;
+        elseif (temp < sum(DirectionDistribution))
             direction = 3;
         end
     end

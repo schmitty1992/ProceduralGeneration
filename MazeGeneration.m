@@ -17,6 +17,31 @@ yticks(0:1:MaxGridY)
 xticklabels([])
 yticklabels([])
 
+% Initialize Map
+Step = 1;
+for i = 1:Step:MaxGridX
+    for j = 1:Step:MaxGridY
+        Map(i,j) = Tile;
+        Map(i,j) = CreateCell(Map(i,j),i-(Step/2),j-(Step/2));
+        DisplayWall(Map(i,j))
+    end
+end
+
+%- Allocate Direction Distribution
+Choice = 3;
+switch Choice
+    case 0 % Equal
+        DirectionDistribution = [0.25 0.25 0.25 0.25];
+    case 1 % Favor East/West
+        DirectionDistribution = [0.2 0.3 0.2 0.3];
+    case 2 % Favor North/South
+        DirectionDistribution = [0.3 0.2 0.3 0.2];
+    case 3 % Strongly Favor East/West
+        DirectionDistribution = [0.1 0.4 0.1 0.4];
+    case 4 % Strongly Favor North/South
+        DirectionDistribution = [0.4 0.1 0.4 0.1];
+end
+
 %- Pick Start Point
 StartX = randi([3,floor(MaxGridX*0.25)])+0.5;
 StartY = randi([3,floor(MaxGridY*0.25)])+0.5;
