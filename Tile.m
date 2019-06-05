@@ -3,6 +3,19 @@ classdef Tile
     %   Detailed explanation goes here
     
     properties
+        %- Room Types
+        % 0 - Sand
+        % 1 - Forest
+        % 2 - Cave
+        % 3 - Treasure
+        RoomTypes = containers.Map({0,1,2,3,4,5},...
+            {[244 220 181]/255,...
+            [79 121 66]/255,...
+            [211 211 211]/255,...
+            [255,223,0]/255,...
+            [155 17 30]/255,...
+            [51 165 50]/255});
+        
         LocationCenter = [0 0];
         WallVector = [{[0 0; 0 0]};
             {[0 0; 0 0]};
@@ -15,6 +28,9 @@ classdef Tile
         PolyY = [];
         Visited = false;
         isStartPoint = false;
+        isRoom = false;
+        RoomType = [];
+        isPerimeter = false;
     end
     
     methods
@@ -50,8 +66,10 @@ classdef Tile
         function DisplayWall(obj)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            
-            if obj.isStartPoint
+            if (obj.isRoom)
+                fill(obj.PolyX,obj.PolyY,obj.RoomTypes(obj.RoomType),...
+                    'EdgeColor',obj.RoomTypes(obj.RoomType)); 
+            elseif obj.isStartPoint
                 fill(obj.PolyX,obj.PolyY,'g','EdgeColor','g')
             elseif obj.Visited
                 fill(obj.PolyX,obj.PolyY,[150 150 150]/255,...
@@ -59,13 +77,20 @@ classdef Tile
             else
                 fill(obj.PolyX,obj.PolyY,'k')
             end
-            for i = 1:length(obj.WallVector)
-                if ~isempty(obj.WallVector{i})
-                    plot(obj.WallVector{i}(:,1),obj.WallVector{i}(:,2),'c','LineWidth',2)
+            if (~obj.isPerimeter)
+                for i = 1:length(obj.WallVector)
+                    if ~isempty(obj.WallVector{i})
+                        plot(obj.WallVector{i}(:,1),obj.WallVector{i}(:,2),'c','LineWidth',2)
+                    end
                 end
             end
-%             plot(obj.LocationCenter(1),obj.LocationCenter(2),'oc','MarkerFaceColor','w','MarkerSize',3)
-            
+        end
+        
+        function obj = ChangeToRoom(obj,RoomType,isPerimeter)
+            obj.isPerimeter = isPerimeter;
+            obj.RoomType = RoomType;
+            obj.isRoom = true;
+            DisplayWall(obj)
         end
     end
 end

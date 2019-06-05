@@ -8,7 +8,7 @@ MaxGridX = 30;
 MaxGridY = 20;
 
 % Start with X x Y Grid
-f = figure('units','normalized','outerposition',[0 0 0.8 0.8]);
+f = figure('units','normalized','outerposition',[0.1 0.1 0.8 0.8]);
 hold on
 grid on
 axis([0 MaxGridX 0 MaxGridY])
@@ -28,7 +28,7 @@ for i = 1:Step:MaxGridX
 end
 
 %- Allocate Direction Distribution
-Choice = 3;
+Choice = 4;
 switch Choice
     case 0 % Equal
         DirectionDistribution = [0.25 0.25 0.25 0.25];
@@ -94,3 +94,12 @@ while i < (MaxGridX * MaxGridY)/4
 end
 
 % RoomPlacement
+for i = 10:14
+    for j = 10:14
+        if (i == 10 || j == 10 || i == 14 || j == 14)
+            Map(i,j) = ChangeToRoom(Map(i,j),0,true);
+        else
+            Map(i,j) = ChangeToRoom(Map(i,j),0,false);
+        end
+    end
+end
