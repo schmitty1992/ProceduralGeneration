@@ -2,7 +2,7 @@ global MaxGridX;
 global MaxGridY;
 
 MinRoomSquareSize = 3;
-MaxRoomSquareSize = 9;
+MaxRoomSquareSize = 6;
 
 NumPlacedRooms = 0;
 MaxNumRooms = 8;
@@ -10,10 +10,8 @@ MaxNumRooms = 8;
 NumLargeRoomSize = 0;
 MaxNumLargeRooms = 1;
 
-StartRoomSize = [5 5];
-BossRoomSize = [11 6];
-
-
+StartRoomSize = [3 3];
+BossRoomSize = [10 6];
 
 while NumPlacedRooms < MaxNumRooms
 %     fprintf('# Placed Rooms: %i \n',NumPlacedRooms)
@@ -27,8 +25,8 @@ while NumPlacedRooms < MaxNumRooms
         room_size_x = BossRoomSize(1);
         room_size_y = BossRoomSize(2);
     else
-        room_size_x = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
-        room_size_y = round(rand()*(MaxRoomSquareSize-MinRoomSquareSize))+MinRoomSquareSize;
+        room_size_x = randi([MinRoomSquareSize,MaxRoomSquareSize]);
+        room_size_y = randi([MinRoomSquareSize,MaxRoomSquareSize]);
     end
     if (mod(room_size_x,2) == 0)
         room_size_x = room_size_x + 1;
@@ -55,22 +53,48 @@ while NumPlacedRooms < MaxNumRooms
     
     %- Generate Perimeter Coords
     perimeter_x = [];
+    perimeter_gap_x = [];
     perimeter_y = [];
+    perimeter_gap_y = [];
     for i = 1:room_size_x
         perimeter_x(end+1) = minX + (i-1);
         perimeter_y(end+1) = minY;
+        perimeter_gap_x(end+1) = (minX-1) + (i-1);
+        perimeter_gap_y(end+1) = minY-1;
+    end
+    for i = 1:2
+        perimeter_gap_x(end+1) = perimeter_gap_x(end) + 1;
+        perimeter_gap_y(end+1) = minY-1;
     end
     for i = 2:room_size_y
         perimeter_x(end+1) = maxX;
         perimeter_y(end+1) = minY + (i-1);
+        perimeter_gap_x(end+1) = maxX+1;
+        perimeter_gap_y(end+1) = (minY-1) + (i-1);
+    end
+    for i = 1:2
+        perimeter_gap_x(end+1) = maxX+1;
+        perimeter_gap_y(end+1) = perimeter_gap_y(end) + 1;
     end
     for i = 2:room_size_x
         perimeter_x(end+1) = maxX - (i-1);
         perimeter_y(end+1) = maxY;
+        perimeter_gap_x(end+1) = (maxX+1) - (i-1);
+        perimeter_gap_y(end+1) = maxY+1;
+    end
+    for i = 1:2
+        perimeter_gap_x(end+1) = perimeter_gap_x(end) - 1;
+        perimeter_gap_y(end+1) = maxY+1;
     end
     for i = 2:room_size_y
         perimeter_x(end+1) = minX;
         perimeter_y(end+1) = maxY - (i-1);
+        perimeter_gap_x(end+1) = minX-1;
+        perimeter_gap_y(end+1) = (maxY+1) - (i-1);
+    end
+    for i = 1:2
+        perimeter_gap_x(end+1) = minX-1;
+        perimeter_gap_y(end+1) = perimeter_gap_y(end) - 1;
     end
     
     %- Redo if Number of Larges Rooms has been reached
@@ -98,10 +122,12 @@ while NumPlacedRooms < MaxNumRooms
         RoomCoord(NumPlacedRooms).RoomSizeY = room_size_y;
         RoomCoord(NumPlacedRooms).X_Vec = perimeter_x;
         RoomCoord(NumPlacedRooms).Y_Vec = perimeter_y;
+        RoomCoord(NumPlacedRooms).X_Gap_Vec = perimeter_gap_x;
+        RoomCoord(NumPlacedRooms).Y_Gap_Vec = perimeter_gap_y;
         if NumPlacedRooms > 1
             for i = 1:NumPlacedRooms-1
-                if any(ismember(RoomCoord(NumPlacedRooms).X_Vec,RoomCoord(i).X_Vec))
-                    if any(ismember(RoomCoord(NumPlacedRooms).Y_Vec,RoomCoord(i).Y_Vec))
+                if any(ismember(RoomCoord(NumPlacedRooms).X_Gap_Vec,RoomCoord(i).X_Gap_Vec))
+                    if any(ismember(RoomCoord(NumPlacedRooms).Y_Gap_Vec,RoomCoord(i).Y_Gap_Vec))
                         % Not Valid Placement Location
                         NumPlacedRooms = NumPlacedRooms - 1;
                         RoomCoord = RoomCoord(1:NumPlacedRooms);
@@ -118,9 +144,51 @@ end
 
 % Find Bottom Left Corner and Top Right Corner of Room
 % Change each cell in area to room type (no walls for now)
-
 hold on
-Map(10,10) = ChangeToRoom(Map(10,10),2);
+for room = 1:length(RoomCoord)
+    if room == 1
+        room_type_selection = 5;
+    elseif room == 2
+        room_type_selection = 4;
+    else
+        percent_chance = rand();
+        if (percent_chance < 0.05)
+            room_type_selection = 3;
+        elseif (percent_chance < 0.30)
+            room_type_selection = 0;
+        elseif (percent_chance < 0.60)
+            room_type_selection = 1;
+        elseif (percent_chance <= 1)
+            room_type_selection = 2;
+        end
+    end
+    for i = RoomCoord(room).X_Vec(1)+1:RoomCoord(room).X_Vec(RoomCoord(room).RoomSizeX)+1
+        for j = RoomCoord(room).Y_Vec(1)+1:RoomCoord(room).Y_Vec(end-RoomCoord(room).RoomSizeY)+1
+            if (AnimateDraw)
+                pause(1e-2)
+            end
+            if (i == RoomCoord(room).X_Vec(1))
+                Map(i,j) = ChangeToRoom(Map(i,j),room_type_selection,true,4);
+            elseif (i == RoomCoord(room).X_Vec(end))
+                Map(i,j) = ChangeToRoom(Map(i,j),room_type_selection,true,2);
+            elseif (j == RoomCoord(room).Y_Vec(1))
+                Map(i,j) = ChangeToRoom(Map(i,j),room_type_selection,true,1);
+            elseif (j == RoomCoord(room).Y_Vec(end))
+                Map(i,j) = ChangeToRoom(Map(i,j),room_type_selection,true,3);
+            else
+                Map(i,j) = ChangeToRoom(Map(i,j),room_type_selection,true,5);
+            end
+        end
+    end
+end
+
+%         RoomTypes = containers.Map({0,1,2,3,4,5},...
+%             {[244 220 181]/255,...
+%             [79 121 66]/255,...
+%             [211 211 211]/255,...
+%             [255,223,0]/255,...
+%             [155 17 30]/255,...
+%             [51 165 50]/255});
 % for i = 1:MaxNumRooms
 %     if i == 1
 %         room_type_selection = 5;
@@ -142,5 +210,5 @@ Map(10,10) = ChangeToRoom(Map(10,10),2);
 %     text(RoomCoord(i).CenterX-0.5,RoomCoord(i).CenterY,sprintf('%i',i),...
 %         'FontSize',16,'Color','w')
 % end
-
-
+% 
+% 

@@ -63,12 +63,12 @@ classdef Tile
             end
         end
         
-        function DisplayWall(obj)
+        function DisplayWall(obj,direction)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
             if (obj.isRoom)
                 fill(obj.PolyX,obj.PolyY,obj.RoomTypes(obj.RoomType),...
-                    'EdgeColor',obj.RoomTypes(obj.RoomType)); 
+                    'EdgeColor',obj.RoomTypes(obj.RoomType));
             elseif obj.isStartPoint
                 fill(obj.PolyX,obj.PolyY,'g','EdgeColor','g')
             elseif obj.Visited
@@ -77,20 +77,26 @@ classdef Tile
             else
                 fill(obj.PolyX,obj.PolyY,'k')
             end
-            if (~obj.isPerimeter)
+            if (~obj.isRoom)
                 for i = 1:length(obj.WallVector)
                     if ~isempty(obj.WallVector{i})
                         plot(obj.WallVector{i}(:,1),obj.WallVector{i}(:,2),'c','LineWidth',2)
                     end
                 end
+            else
+                if (direction < 5)
+                    if ~isempty(obj.WallVector{direction})
+                        plot(obj.WallVector{direction}(:,1),obj.WallVector{direction}(:,2),'c','LineWidth',2)
+                    end
+                end
             end
         end
         
-        function obj = ChangeToRoom(obj,RoomType,isPerimeter)
+        function obj = ChangeToRoom(obj,RoomType,isPerimeter,direction)
             obj.isPerimeter = isPerimeter;
             obj.RoomType = RoomType;
             obj.isRoom = true;
-            DisplayWall(obj)
+            DisplayWall(obj,direction)
         end
     end
 end

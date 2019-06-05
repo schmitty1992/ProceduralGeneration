@@ -1,4 +1,4 @@
-clearvars
+clearvars -except err
 close all
 clc
 
@@ -28,7 +28,7 @@ for i = 1:Step:MaxGridX
 end
 
 %- Allocate Direction Distribution
-Choice = 4;
+Choice = 3;
 switch Choice
     case 0 % Equal
         DirectionDistribution = [0.25 0.25 0.25 0.25];
@@ -51,7 +51,7 @@ EndX = randi([floor(MaxGridX*0.75),MaxGridX-6])+0.5;
 EndY = randi([floor(MaxGridY*0.75),MaxGridY-4])+0.5;
 
 %- Plot Qualities
-AnimateDraw = 1;
+AnimateDraw = 0;
 SaveGif = 0;
 MarkerSize = 8;
 
@@ -93,13 +93,4 @@ while i < (MaxGridX * MaxGridY)/4
     i = i + 1;
 end
 
-% RoomPlacement
-for i = 10:14
-    for j = 10:14
-        if (i == 10 || j == 10 || i == 14 || j == 14)
-            Map(i,j) = ChangeToRoom(Map(i,j),0,true);
-        else
-            Map(i,j) = ChangeToRoom(Map(i,j),0,false);
-        end
-    end
-end
+RoomPlacement
