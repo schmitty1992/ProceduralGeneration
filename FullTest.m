@@ -1,9 +1,12 @@
-err = MException('','');
+clc
 for i = 1:10
+    disp('===================')
     try
         MazeGeneration;
         disp('Success')
     catch e
-        err(end+1) = e;
+        disp(e)
     end
+    fprintf('Seed: %i \n',Seed)
+    disp('===================')
 end

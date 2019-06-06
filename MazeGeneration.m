@@ -1,6 +1,6 @@
 clearvars -except err
 close all
-clc
+% clc
 
 global MaxGridX;
 global MaxGridY;
@@ -41,6 +41,11 @@ switch Choice
     case 4 % Strongly Favor North/South
         DirectionDistribution = [0.4 0.1 0.4 0.1];
 end
+
+%- Initialize Generator with Seed
+Seed = randi([1,1000]);
+% Seed = 231; % For debugging purposes
+rng(Seed,'twister');
 
 %- Pick Start Point
 StartX = randi([3,floor(MaxGridX*0.25)])+0.5;
